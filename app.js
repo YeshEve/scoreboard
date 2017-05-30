@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 var PLAYERS = [
   {
     name: "Demo Player",
-    score: 10,
+    score: 0,
     id: 1,
   },
   /*
@@ -16,6 +16,15 @@ var PLAYERS = [
   },
   */
 ];
+var nextId = 2;
+
+var Stopwatch = React.createClass({
+  render: function() {
+    return (
+      
+    );
+  }
+});
 
 var AddPlayerForm = React.createClass({
   propTypes: {
@@ -111,6 +120,7 @@ function Player(props) {
     <div className="players">
       <div className="player">
         <div className="player-name">
+          <a className="remove-player" onClick={props.onRemove}>×</a>
           {props.name}
         </div>
         <div className="player-score">
@@ -125,6 +135,7 @@ Player.propTypes = {
   name: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
   onScoreChange: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
 };
 
 var Application = React.createClass({
@@ -150,16 +161,23 @@ var Application = React.createClass({
   },
 
   onScoreChange: function(index, delta) {
-    console.log('onScoreChange', index, delta);
     this.state.players[index].score += delta;
     this.setState(this.state);
   },
 
   onPlayerAdd: function(name) {
-    console.log('player added:', name);
     this.state.players.push({
-      
+      name: name,
+      score: 0,
+      id: nextId,
     });
+    this.setState(this.state);
+    nextId += 1;
+  },
+
+  onRemovePlayer: function(index) {
+    this.state.players.splice(index, 1);
+    this.setState(this.state);
   },
 
   render: function() {
@@ -172,6 +190,7 @@ var Application = React.createClass({
             return (
               <Player
               onScoreChange={function(delta) {this.onScoreChange(index, delta)}.bind(this)}
+              onRemove={function() {this.onRemovePlayer(index)}.bind(this)}
               name={player.name}
               score={player.score}
               key={player.id} />
